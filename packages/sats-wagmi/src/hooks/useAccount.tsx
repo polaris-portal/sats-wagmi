@@ -17,13 +17,11 @@ const useAccount = ({ onConnect }: UseAccountProps = {}) => {
   const { data, error, isError, isLoading, isSuccess, refetch } = useQuery({
     queryKey: ['sats-account', connector],
     queryFn: () => {
-      if (!connector) return undefined;
-
-      const address = connector.getPaymentAddress();
+      const address = connector?.getPaymentAddress();
 
       onConnect?.({ address, connector });
 
-      const publicKey = connector.getPublicKey();
+      const publicKey = connector?.getPublicKey();
 
       const addressType = address ? getAddressInfo(address).type : undefined;
 
