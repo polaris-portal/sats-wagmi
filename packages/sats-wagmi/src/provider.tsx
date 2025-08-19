@@ -5,7 +5,7 @@ import { FC, ReactNode, createContext, useCallback, useContext, useEffect, useSt
 import { useLocalStorage } from 'usehooks-ts';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { LeatherConnector, MMSnapConnector, UnisatConnector, XverseConnector, LeapConnector } from './connectors';
+import { UnisatConnector, XverseConnector, LeapConnector } from './connectors';
 import { SatsConnector } from './connectors/base';
 import { LocalStorageKeys } from './constants';
 import { OKXConnector } from './connectors/okx';
@@ -38,9 +38,15 @@ type SatsWagmiConfigProps = {
   children: ReactNode;
   network?: BitcoinNetwork;
   queryClient: QueryClient;
+  defaultConnectors?: SatsConnector[];
 };
 
-const SatsWagmiConfig: FC<SatsWagmiConfigProps> = ({ children, queryClient, network = BitcoinNetwork.mainnet }) => {
+const SatsWagmiConfig: FC<SatsWagmiConfigProps> = ({
+  children,
+  queryClient,
+  defaultConnectors,
+  network = BitcoinNetwork.mainnet
+}) => {
   const [connectors, setConnectors] = useState<SatsConnector[]>([]);
   const [connector, setCurrentConnector] = useState<SatsConnector>();
 
@@ -54,7 +60,7 @@ const SatsWagmiConfig: FC<SatsWagmiConfigProps> = ({ children, queryClient, netw
 
   useEffect(() => {
     const init = () => {
-      const readyConnectors: SatsConnector[] = [];
+      const readyConnectors: SatsConnector[] = defaultConnectors ?? [];
 
       if (network === 'mainnet') {
         const okx = new OKXConnector(network);
@@ -78,13 +84,13 @@ const SatsWagmiConfig: FC<SatsWagmiConfigProps> = ({ children, queryClient, netw
 
       readyConnectors.push(binancew3w);
 
-      const mmSnap = new MMSnapConnector(network);
+      /* const mmSnap = new MMSnapConnector(network);
 
       readyConnectors.push(mmSnap);
 
       const leather = new LeatherConnector(network);
 
-      readyConnectors.push(leather);
+      readyConnectors.push(leather); */
 
       const leap = new LeapConnector(network);
 
